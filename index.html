@@ -244,7 +244,6 @@
                         <input type="number" id="newProdPrice" placeholder="السعر (ج.م)" class="bg-white border border-slate-200 rounded-lg p-2 text-sm">
                     </div>
                     <div class="grid grid-cols-3 gap-2 items-center">
-                        <!-- تم التعديل هنا: قائمة منسدلة للمجموعة + زرار إضافة مجموعة جديدة -->
                         <div class="flex gap-1">
                             <select id="newProdCategory" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-semibold text-slate-700">
                                 <option value="">-- اختر المجموعة --</option>
@@ -284,8 +283,11 @@
             whatsapp: "201000000000",
             primaryColor: "#2563eb",
             logoUrl: "",
-            googleSheetUrl: ""
+            googleSheetUrl: "https://script.google.com/macros/s/AKfycbyBl7z-JBnOgfrZzzMin17ndNWeqjmOux1723uCpgbXa5WOpXipyr4oZhCZDeoQK9f5/exec"
         };
+
+        // تأكيد تثبيت الرابط حتى لو تم استرجاع الإعدادات من التخزين المحلي القديم
+        storeConfig.googleSheetUrl = "https://script.google.com/macros/s/AKfycbyBl7z-JBnOgfrZzzMin17ndNWeqjmOux1723uCpgbXa5WOpXipyr4oZhCZDeoQK9f5/exec";
 
         const FIXED_ADMIN_PASSWORD = "444888";
 
@@ -314,14 +316,13 @@
             renderCategoryFilters();
             renderProducts();
             populateDeliveryZones();
-            populateProductCategories(); // تحديث وتعبئة المجموعات عند التحميل
+            populateProductCategories();
 
             if (storeConfig.googleSheetUrl) {
                 fetchStoreDataFromCloud();
             }
         });
 
-        // دالة تعبئة القائمة المنسدلة للمجموعات في لوحة التحكم
         function populateProductCategories(selectedCategory = '') {
             const select = document.getElementById('newProdCategory');
             if (!select) return;
@@ -337,7 +338,6 @@
             select.innerHTML = optionsHtml;
         }
 
-        // دالة سريعة لإضافة مجموعة جديدة من زر (+)
         function addNewCategoryPrompt() {
             let newCatName = prompt("أدخل اسم المجموعة الجديدة:");
             if (newCatName && newCatName.trim() !== "") {
@@ -373,6 +373,9 @@
                 .then(data => {
                     if (data && data.success) {
                         if (data.config && data.config.name) storeConfig = { ...storeConfig, ...data.config };
+                        // الحفاظ على الرابط الثابت دائماً
+                        storeConfig.googleSheetUrl = "https://script.google.com/macros/s/AKfycbyBl7z-JBnOgfrZzzMin17ndNWeqjmOux1723uCpgbXa5WOpXipyr4oZhCZDeoQK9f5/exec";
+                        
                         if (data.products && data.products.length > 0) products = data.products;
                         if (data.zones && data.zones.length > 0) deliveryZones = data.zones;
                         if (data.socialLinks) socialLinks = data.socialLinks;
@@ -523,11 +526,11 @@
             if(!container) return;
             const categories = [...new Set(products.map(p => p.category || 'عام'))];
             
-            let html = `<button onclick="setCategory('all')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold ${currentCategory === 'all' ? 'bg-primary text-white' : 'bg-white text-slate-600 hover:bg-slate-100'} transition shadow-sm">الكل</button>`;
+            let html = `<button onclick="setCategory('all')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold ${currentCategory === 'all' ? 'bg-primary text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'} transition">الكل</button>`;
             
             categories.forEach(cat => {
-                const isActive = currentCategory === cat;
-                html += `<button onclick="setCategory('${cat}')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold ${isActive ? 'bg-primary text-white' : 'bg-white text-slate-600 hover:bg-slate-100'} transition shadow-sm">${cat}</button>`;
+                const activeClass = currentCategory === cat ? 'bg-primary text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200';
+                html += `<button onclick="setCategory('${cat}')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold ${activeClass} transition">${cat}</button>`;
             });
             
             container.innerHTML = html;
@@ -539,48 +542,42 @@
             renderProducts();
         }
 
-        function filterProducts() {
-            renderProducts();
-        }
-
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
             if(!grid) return;
             grid.innerHTML = '';
+
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
             const filtered = products.filter(p => {
-                const pCat = p.category || 'عام';
-                const matchCat = currentCategory === 'all' || pCat === currentCategory;
-                const matchName = p.name.toLowerCase().includes(searchVal);
-                return matchCat && matchName;
+                const matchesCat = currentCategory === 'all' || (p.category || 'عام') === currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchVal);
+                return matchesCat && matchesSearch;
             });
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">عذراً، مفيش منتجات مطابقة للبحث!</div>`;
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-semibold">لا توجد منتجات مطابقة للبحث</div>`;
                 return;
             }
 
             filtered.forEach(p => {
-                const unitText = p.unit || 'قطعة';
-                const pCat = p.category || 'عام';
-
                 grid.innerHTML += `
-                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col justify-between">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col justify-between hover:shadow-md transition">
                         <div>
-                            <div class="h-36 bg-slate-100 overflow-hidden relative">
-                                <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'">
+                            <div class="h-36 sm:h-44 bg-slate-100 overflow-hidden relative">
+                                <img src="${p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}" alt="${p.name}" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-md">${p.category || 'عام'}</span>
                             </div>
-                            <div class="p-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-semibold">${pCat}</span>
-                                    <span class="text-xs text-slate-400 font-bold">${unitText}</span>
+                            <div class="p-3 space-y-1">
+                                <h4 class="font-bold text-sm text-slate-800 line-clamp-1">${p.name}</h4>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-primary font-black text-base">${p.price}</span>
+                                    <span class="text-slate-400 text-xs">ج.م / ${p.unit || 'قطعة'}</span>
                                 </div>
-                                <h3 class="font-bold text-sm text-slate-800 mt-1 truncate">${p.name}</h3>
-                                <p class="text-primary font-bold text-sm mt-1">${p.price} ج.م</p>
                             </div>
                         </div>
                         <div class="p-3 pt-0">
-                            <button onclick="addToCart(${p.id})" class="w-full bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5">
+                            <button onclick="addToCart(${p.id})" class="w-full bg-primary hover:bg-opacity-90 text-white font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
                                 <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
                             </button>
                         </div>
@@ -589,36 +586,35 @@
             });
         }
 
+        function filterProducts() {
+            renderProducts();
+        }
+
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
             if(!product) return;
 
             const existing = cart.find(item => item.id === productId);
-            if (existing) {
-                existing.qty += 1;
+            if(existing) {
+                existing.quantity += 1;
             } else {
-                cart.push({ ...product, qty: 1 });
+                cart.push({ ...product, quantity: 1 });
             }
-            updateCartBadge();
-            renderCartItems();
+
+            updateCartUI();
+            toggleCartModal();
         }
 
-        function updateCartBadge() {
+        function updateCartUI() {
             const badge = document.getElementById('cartBadge');
-            if(badge) badge.innerText = cart.reduce((sum, item) => sum + item.qty, 0);
-        }
-
-        function toggleCartModal() {
-            const modal = document.getElementById('cartModal');
-            if(modal) modal.classList.toggle('hidden');
-            renderCartItems();
-        }
-
-        function renderCartItems() {
             const container = document.getElementById('cartItemsContainer');
-            if(!container) return;
+            if(!badge || !container) return;
+
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            badge.innerText = totalCount;
+
             if(cart.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">سلة الطلبات فارغة حالياً.</div>`;
+                container.innerHTML = `<div class="text-center py-10 text-slate-400 text-sm">سلة الطلبات فارغة حالياً</div>`;
                 updateCartTotal();
                 return;
             }
@@ -626,118 +622,90 @@
             container.innerHTML = '';
             cart.forEach((item, index) => {
                 container.innerHTML += `
-                    <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <div class="flex items-center gap-2.5">
-                            <img src="${item.image}" class="w-10 h-10 object-cover rounded-lg" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'">
+                    <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100 gap-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${item.image || ''}" class="w-12 h-12 rounded-lg object-cover bg-slate-200">
                             <div>
-                                <h4 class="font-bold text-xs text-slate-800">${item.name}</h4>
-                                <span class="text-[11px] text-primary font-bold">${item.price * item.qty} ج.م</span>
+                                <h5 class="font-bold text-xs text-slate-800 line-clamp-1">${item.name}</h5>
+                                <span class="text-primary font-bold text-xs">${item.price * item.quantity} ج.م</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="changeQty(${index}, -1)" class="w-6 h-6 rounded bg-white border border-slate-200 text-xs font-bold hover:bg-slate-100">-</button>
-                            <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
-                            <button onclick="changeQty(${index}, 1)" class="w-6 h-6 rounded bg-white border border-slate-200 text-xs font-bold hover:bg-slate-100">+</button>
-                            <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 ml-1 text-xs"><i class="fa-solid fa-trash"></i></button>
+                            <div class="flex items-center border border-slate-200 bg-white rounded-lg overflow-hidden">
+                                <button onclick="changeQuantity(${index}, -1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 text-xs font-bold">-</button>
+                                <span class="px-2 text-xs font-bold">${item.quantity}</span>
+                                <button onclick="changeQuantity(${index}, 1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 text-xs font-bold">+</button>
+                            </div>
+                            <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 p-1 text-xs"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
             });
+
             updateCartTotal();
         }
 
-        function changeQty(index, delta) {
-            cart[index].qty += delta;
-            if (cart[index].qty <= 0) {
+        function changeQuantity(index, delta) {
+            cart[index].quantity += delta;
+            if(cart[index].quantity <= 0) {
                 cart.splice(index, 1);
             }
-            updateCartBadge();
-            renderCartItems();
+            updateCartUI();
         }
 
         function removeFromCart(index) {
             cart.splice(index, 1);
-            updateCartBadge();
-            renderCartItems();
+            updateCartUI();
         }
 
         function populateDeliveryZones() {
             const select = document.getElementById('deliveryZoneSelect');
             if(!select) return;
+
             select.innerHTML = '';
-            deliveryZones.forEach((zone, idx) => {
-                select.innerHTML += `<option value="${idx}">${zone.name} (${zone.fee} ج.م)</option>`;
+            deliveryZones.forEach((z, index) => {
+                select.innerHTML += `<option value="${index}">${z.name} (${z.fee} ج.م)</option>`;
             });
             updateCartTotal();
         }
 
         function updateCartTotal() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const totalPriceEl = document.getElementById('cartTotalPrice');
             const zoneSelect = document.getElementById('deliveryZoneSelect');
+            if(!totalPriceEl) return;
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             let shippingFee = 0;
-            if (zoneSelect && zoneSelect.value !== "" && deliveryZones[zoneSelect.value]) {
-                shippingFee = deliveryZones[zoneSelect.value].fee;
+
+            if(zoneSelect && deliveryZones.length > 0 && zoneSelect.value !== "") {
+                const zoneIndex = parseInt(zoneSelect.value);
+                if(deliveryZones[zoneIndex]) {
+                    shippingFee = deliveryZones[zoneIndex].fee;
+                }
             }
-            const total = subtotal + shippingFee;
-            const totalElement = document.getElementById('cartTotalPrice');
-            if(totalElement) totalElement.innerText = total + " ج.م";
+
+            const grandTotal = subtotal + shippingFee;
+            totalPriceEl.innerText = grandTotal + " ج.م";
         }
 
-        function checkoutWhatsApp() {
-            if(cart.length === 0) {
-                alert("السلة فارغة، برجاء إضافة منتجات أولاً.");
-                return;
-            }
-            const name = document.getElementById('clientName').value.trim();
-            const phone = document.getElementById('clientPhone').value.trim();
-            const address = document.getElementById('clientAddress').value.trim();
-            const notes = document.getElementById('clientNotes').value.trim();
-
-            if(!name || !phone || !address) {
-                alert("يرجى إدخال (الاسم، رقم الموبايل، وعنوان التوصيل) كاملاً.");
-                return;
-            }
-
-            const zoneSelect = document.getElementById('deliveryZoneSelect');
-            let zoneName = "غير محددة";
-            let shippingFee = 0;
-            if (zoneSelect && zoneSelect.value !== "" && deliveryZones[zoneSelect.value]) {
-                zoneName = deliveryZones[zoneSelect.value].name;
-                shippingFee = deliveryZones[zoneSelect.value].fee;
-            }
-
-            let message = `🛒 *طلب جديد من المتجر*:\n\n`;
-            message += `👤 *العميل*: ${name}\n`;
-            message += `📱 *الهاتف*: ${phone}\n`;
-            message += `📍 *العنوان*: ${address}\n`;
-            if(notes) message += `📝 *ملاحظات*: ${notes}\n`;
-            message += `🚚 *منطقة الشحن*: ${zoneName} (${shippingFee} ج.م)\n\n`;
-            message += `📦 *المنتجات المطلوبة*:\n`;
-
-            cart.forEach((item, idx) => {
-                message += `${idx + 1}. ${item.name} (${item.qty} ${item.unit || 'قطعة'}) - ${item.price * item.qty} ج.م\n`;
-            });
-
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const total = subtotal + shippingFee;
-            message += `\n💰 *الإجمالي الكلي (شامل الشحن)*: ${total} ج.م`;
-
-            const url = `https://wa.me/${storeConfig.whatsapp}?text=` + encodeURIComponent(message);
-            window.open(url, '_blank');
+        function toggleCartModal() {
+            const modal = document.getElementById('cartModal');
+            if(modal) modal.classList.toggle('hidden');
         }
 
         function openAdminModal() {
-            document.getElementById('adminLoginModal').classList.remove('hidden');
+            const modal = document.getElementById('adminLoginModal');
+            if(modal) modal.classList.remove('hidden');
         }
 
         function closeAdminLogin() {
-            document.getElementById('adminLoginModal').classList.add('hidden');
-            document.getElementById('adminPasswordInput').value = '';
+            const modal = document.getElementById('adminLoginModal');
+            if(modal) modal.classList.add('hidden');
         }
 
         function verifyAdminPassword() {
             const pass = document.getElementById('adminPasswordInput').value;
-            if (pass === FIXED_ADMIN_PASSWORD) {
+            if(pass === FIXED_ADMIN_PASSWORD) {
                 closeAdminLogin();
                 openAdminDashboard();
             } else {
@@ -746,51 +714,54 @@
         }
 
         function openAdminDashboard() {
-            document.getElementById('adminDashboardModal').classList.remove('hidden');
-            
+            const modal = document.getElementById('adminDashboardModal');
+            if(modal) modal.classList.remove('hidden');
+            loadAdminDataToInputs();
+        }
+
+        function closeAdminDashboard() {
+            const modal = document.getElementById('adminDashboardModal');
+            if(modal) modal.classList.add('hidden');
+        }
+
+        function loadAdminDataToInputs() {
             document.getElementById('settingStoreName').value = storeConfig.name;
             document.getElementById('settingStoreDesc').value = storeConfig.description || "";
             document.getElementById('settingWhatsApp').value = storeConfig.whatsapp;
-            document.getElementById('settingGoogleSheet').value = storeConfig.googleSheetUrl || "";
+            document.getElementById('settingGoogleSheet').value = storeConfig.googleSheetUrl;
             document.getElementById('settingColor').value = storeConfig.primaryColor;
 
             renderAdminSocialList();
             renderAdminBannersList();
             renderAdminZonesList();
             renderAdminProductsList();
-            populateProductCategories(); // تحديث المجموعات عند فتح اللوحة
+            populateProductCategories();
         }
 
-        function closeAdminDashboard() {
-            document.getElementById('adminDashboardModal').classList.add('hidden');
-        }
-
-        // دوال الإدارة والتحكم في السوشيال ميديا والإعلانات والمنتجات...
         function addSocialLink() {
             const platform = document.getElementById('newSocialPlatform').value;
             const url = document.getElementById('newSocialUrl').value.trim();
-            if(!url) { alert("أدخل رابط الحساب"); return; }
+            if(!url) { alert("أدخل رابط الحساب أولاً"); return; }
+
             socialLinks.push({ platform, url });
             document.getElementById('newSocialUrl').value = '';
             renderAdminSocialList();
-            renderSocialIcons();
         }
 
         function removeSocialLink(index) {
             socialLinks.splice(index, 1);
             renderAdminSocialList();
-            renderSocialIcons();
         }
 
         function renderAdminSocialList() {
-            const container = document.getElementById('adminSocialList');
-            if(!container) return;
-            container.innerHTML = '';
+            const list = document.getElementById('adminSocialList');
+            if(!list) return;
+            list.innerHTML = '';
             socialLinks.forEach((s, idx) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200 text-xs">
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200 text-xs">
                         <span><b>${s.platform}:</b> ${s.url}</span>
-                        <button onclick="removeSocialLink(${idx})" class="text-red-500 font-bold">حذف</button>
+                        <button onclick="removeSocialLink(${idx})" class="text-red-500 font-bold px-2">حذف</button>
                     </div>
                 `;
             });
@@ -799,170 +770,152 @@
         function addBannerImage() {
             const fileInput = document.getElementById('newBannerFile');
             const linkInput = document.getElementById('newBannerLink');
+            const link = linkInput.value.trim();
+
             if(fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    bannerImages.push({ image: e.target.result, link: linkInput.value.trim() });
+                    bannerImages.push({ image: e.target.result, link });
                     fileInput.value = '';
                     linkInput.value = '';
                     renderAdminBannersList();
-                    renderBanners();
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                alert("يرجى اختيار صورة للإعلان أولاً.");
+                alert("اختر صورة للإعلان أولاً");
             }
         }
 
         function removeBannerImage(index) {
             bannerImages.splice(index, 1);
             renderAdminBannersList();
-            renderBanners();
         }
 
         function renderAdminBannersList() {
-            const container = document.getElementById('adminBannersList');
-            if(!container) return;
-            container.innerHTML = '';
+            const list = document.getElementById('adminBannersList');
+            if(!list) return;
+            list.innerHTML = '';
             bannerImages.forEach((b, idx) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200 text-xs">
-                        <img src="${b.image}" class="w-10 h-6 object-cover rounded">
-                        <span class="truncate max-w-[150px]">${b.link || 'بدون رابط'}</span>
-                        <button onclick="removeBannerImage(${idx})" class="text-red-500 font-bold">حذف</button>
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200 text-xs gap-2">
+                        <img src="${b.image}" class="w-10 h-10 object-cover rounded">
+                        <span class="truncate flex-grow">${b.link || 'بدون رابط'}</span>
+                        <button onclick="removeBannerImage(${idx})" class="text-red-500 font-bold px-2">حذف</button>
                     </div>
                 `;
             });
         }
 
         function saveZoneItem() {
-            const nameInput = document.getElementById('newZoneName');
-            const feeInput = document.getElementById('newZoneFee');
-            const editingIdx = parseInt(document.getElementById('editingZoneIndex').value);
+            const name = document.getElementById('newZoneName').value.trim();
+            const fee = parseFloat(document.getElementById('newZoneFee').value);
+            const editingIndex = parseInt(document.getElementById('editingZoneIndex').value);
 
-            if(!nameInput.value.trim() || !feeInput.value) {
-                alert("برجاء إدخال اسم المنطقة وتكلفة الشحن.");
-                return;
-            }
+            if(!name || isNaN(fee)) { alert("أدخل اسم المنطقة وتكلفة الشحن بشكل صحيح"); return; }
 
-            const zoneData = { name: nameInput.value.trim(), fee: parseFloat(feeInput.value) };
-
-            if(editingIdx === -1) {
-                deliveryZones.push(zoneData);
+            if(editingIndex === -1) {
+                deliveryZones.push({ name, fee });
             } else {
-                deliveryZones[editingIdx] = zoneData;
-                document.getElementById('editingZoneIndex').value = -1;
+                deliveryZones[editingIndex] = { name, fee };
+                document.getElementById('editingZoneIndex').value = "-1";
                 document.getElementById('zoneActionBtn').innerText = "إضافة منطقة الشحن";
             }
 
-            nameInput.value = '';
-            feeInput.value = '';
+            document.getElementById('newZoneName').value = '';
+            document.getElementById('newZoneFee').value = '';
             renderAdminZonesList();
             populateDeliveryZones();
         }
 
-        function editZone(idx) {
-            document.getElementById('newZoneName').value = deliveryZones[idx].name;
-            document.getElementById('newZoneFee').value = deliveryZones[idx].fee;
-            document.getElementById('editingZoneIndex').value = idx;
+        function editZoneItem(index) {
+            const z = deliveryZones[index];
+            document.getElementById('newZoneName').value = z.name;
+            document.getElementById('newZoneFee').value = z.fee;
+            document.getElementById('editingZoneIndex').value = index;
             document.getElementById('zoneActionBtn').innerText = "تعديل منطقة الشحن";
         }
 
-        function removeZone(idx) {
-            deliveryZones.splice(idx, 1);
+        function removeZoneItem(index) {
+            deliveryZones.splice(index, 1);
             renderAdminZonesList();
             populateDeliveryZones();
         }
 
         function renderAdminZonesList() {
-            const container = document.getElementById('adminZonesList');
-            if(!container) return;
-            container.innerHTML = '';
+            const list = document.getElementById('adminZonesList');
+            if(!list) return;
+            list.innerHTML = '';
             deliveryZones.forEach((z, idx) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200 text-xs">
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200 text-xs">
                         <span><b>${z.name}</b> - ${z.fee} ج.م</span>
                         <div class="flex gap-2">
-                            <button onclick="editZone(${idx})" class="text-blue-600 font-bold">تعديل</button>
-                            <button onclick="removeZone(${idx})" class="text-red-500 font-bold">حذف</button>
+                            <button onclick="editZoneItem(${idx})" class="text-primary font-bold">تعديل</button>
+                            <button onclick="removeZoneItem(${idx})" class="text-red-500 font-bold">حذف</button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function saveProductItem() {
-            const nameInput = document.getElementById('newProdName');
-            const priceInput = document.getElementById('newProdPrice');
-            const categorySelect = document.getElementById('newProdCategory'); // تم التعديل لاختيار القائمة
-            const unitSelect = document.getElementById('newProdUnit');
-            const fileInput = document.getElementById('newProdImageFile');
-            const editingIdx = parseInt(document.getElementById('editingProductIndex').value);
-
-            if(!nameInput.value.trim() || !priceInput.value) {
-                alert("يرجى إدخال اسم المنتج والسعر.");
-                return;
-            }
-
-            const categoryName = categorySelect.value.trim() !== "" ? categorySelect.value.trim() : "عام";
-
-            const proceedWithImage = (imageUrl) => {
-                const productData = {
-                    id: editingIdx !== -1 ? products[editingIdx].id : Date.now(),
-                    name: nameInput.value.trim(),
-                    price: parseFloat(priceInput.value),
-                    category: categoryName,
-                    unit: unitSelect.value,
-                    image: imageUrl
-                };
-
-                if(editingIdx === -1) {
-                    products.push(productData);
-                } else {
-                    products[editingIdx] = productData;
-                    document.getElementById('editingProductIndex').value = -1;
-                    document.getElementById('productActionBtn').innerText = "إضافة المنتج للقائمة";
+        let tempProdImageBase64 = "";
+        document.addEventListener('change', (e) => {
+            if(e.target && e.target.id === 'newProdImageFile') {
+                const file = e.target.files[0];
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => { tempProdImageBase64 = evt.target.result; };
+                    reader.readAsDataURL(file);
                 }
-
-                nameInput.value = '';
-                priceInput.value = '';
-                categorySelect.value = '';
-                fileInput.value = '';
-                
-                renderAdminProductsList();
-                renderCategoryFilters();
-                renderProducts();
-                populateProductCategories(); // تحديث المجموعات
-            };
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) { proceedWithImage(e.target.result); };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                let defaultImg = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300";
-                if(editingIdx !== -1) defaultImg = products[editingIdx].image;
-                proceedWithImage(defaultImg);
             }
+        });
+
+        function saveProductItem() {
+            const name = document.getElementById('newProdName').value.trim();
+            const price = parseFloat(document.getElementById('newProdPrice').value);
+            const category = document.getElementById('newProdCategory').value || 'عام';
+            const unit = document.getElementById('newProdUnit').value;
+            const editingIndex = parseInt(document.getElementById('editingProductIndex').value);
+
+            if(!name || isNaN(price)) { alert("أدخل اسم المنتج والسعر بشكل صحيح"); return; }
+
+            let image = tempProdImageBase64;
+            if(editingIndex !== -1 && !image) {
+                image = products[editingIndex].image;
+            }
+
+            if(editingIndex === -1) {
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.push({ id: newId, name, price, category, unit, image: image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300' });
+            } else {
+                products[editingIndex] = { ...products[editingIndex], name, price, category, unit, image };
+                document.getElementById('editingProductIndex').value = "-1";
+                document.getElementById('productActionBtn').innerText = "إضافة المنتج للقائمة";
+            }
+
+            document.getElementById('newProdName').value = '';
+            document.getElementById('newProdPrice').value = '';
+            tempProdImageBase64 = "";
+            document.getElementById('newProdImageFile').value = '';
+
+            renderAdminProductsList();
+            renderCategoryFilters();
+            renderProducts();
+            populateProductCategories();
         }
 
-        function editProduct(idx) {
-            const p = products[idx];
+        function editProductItem(index) {
+            const p = products[index];
             document.getElementById('newProdName').value = p.name;
             document.getElementById('newProdPrice').value = p.price;
-            
-            // التأكد من اختيار المجموعة في القائمة المنسدلة أو إضافتها لو مش موجودة
-            const catSelect = document.getElementById('newProdCategory');
             populateProductCategories(p.category || 'عام');
-            catSelect.value = p.category || 'عام';
-
             document.getElementById('newProdUnit').value = p.unit || 'قطعة';
-            document.getElementById('editingProductIndex').value = idx;
+            document.getElementById('editingProductIndex').value = index;
             document.getElementById('productActionBtn').innerText = "تعديل المنتج";
         }
 
-        function removeProduct(idx) {
-            products.splice(idx, 1);
+        function removeProductItem(index) {
+            products.splice(index, 1);
             renderAdminProductsList();
             renderCategoryFilters();
             renderProducts();
@@ -970,22 +923,20 @@
         }
 
         function renderAdminProductsList() {
-            const container = document.getElementById('adminProductsList');
-            if(!container) return;
-            container.innerHTML = '';
+            const list = document.getElementById('adminProductsList');
+            if(!list) return;
+            list.innerHTML = '';
             products.forEach((p, idx) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-2 rounded border border-slate-200 text-xs">
-                        <div class="flex items-center gap-2">
-                            <img src="${p.image}" class="w-8 h-8 object-cover rounded">
-                            <div>
-                                <span class="font-bold">${p.name}</span>
-                                <span class="text-slate-400 block">${p.category || 'عام'} - ${p.price} ج.م</span>
-                            </div>
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200 text-xs gap-2">
+                        <img src="${p.image || ''}" class="w-10 h-10 object-cover rounded">
+                        <div class="flex-grow">
+                            <h5 class="font-bold line-clamp-1">${p.name}</h5>
+                            <span class="text-slate-500">${p.price} ج.م (${p.category || 'عام'})</span>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editProduct(${idx})" class="text-blue-600 font-bold">تعديل</button>
-                            <button onclick="removeProduct(${idx})" class="text-red-500 font-bold">حذف</button>
+                            <button onclick="editProductItem(${idx})" class="text-primary font-bold">تعديل</button>
+                            <button onclick="removeProductItem(${idx})" class="text-red-500 font-bold">حذف</button>
                         </div>
                     </div>
                 `;
@@ -993,12 +944,15 @@
         }
 
         function saveAndSyncEverything() {
-            storeConfig.name = document.getElementById('settingStoreName').value.trim() || "متجر المبيعات العام";
+            storeConfig.name = document.getElementById('settingStoreName').value.trim() || storeConfig.name;
             storeConfig.description = document.getElementById('settingStoreDesc').value.trim();
-            storeConfig.whatsapp = document.getElementById('settingWhatsApp').value.trim() || "201000000000";
-            storeConfig.googleSheetUrl = document.getElementById('settingGoogleSheet').value.trim();
+            storeConfig.whatsapp = document.getElementById('settingWhatsApp').value.trim() || storeConfig.whatsapp;
+            // تثبيت الرابط البرمجي دائماً هنا لتلافي أي تغيير
+            storeConfig.googleSheetUrl = "https://script.google.com/macros/s/AKfycbyBl7z-JBnOgfrZzzMin17ndNWeqjmOux1723uCpgbXa5WOpXipyr4oZhCZDeoQK9f5/exec";
             storeConfig.primaryColor = document.getElementById('settingColor').value;
-            if(tempLogoBase64) storeConfig.logoUrl = tempLogoBase64;
+            if(tempLogoBase64) {
+                storeConfig.logoUrl = tempLogoBase64;
+            }
 
             localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('general_store_products', JSON.stringify(products));
@@ -1012,31 +966,76 @@
             renderCategoryFilters();
             renderProducts();
 
-            if (storeConfig.googleSheetUrl) {
-                const syncData = {
-                    action: "saveData",
-                    config: storeConfig,
-                    products: products,
-                    zones: deliveryZones,
-                    socialLinks: socialLinks,
-                    bannerImages: bannerImages
-                };
+            // المزامنة مع جوجل شيت
+            const payload = {
+                action: "saveData",
+                config: storeConfig,
+                products: products,
+                zones: deliveryZones,
+                socialLinks: socialLinks,
+                bannerImages: bannerImages
+            };
 
-                fetch(storeConfig.googleSheetUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(syncData)
-                }).then(() => {
-                    alert("تم حفظ التعديلات وتحديث المتجر بنجاح ومزامنتها مع السحابة!");
-                    closeAdminDashboard();
-                }).catch(err => {
-                    alert("تم الحفظ محلياً ولكن تعذر مزامنة الشيت، تأكد من صحة الرابط.");
-                });
-            } else {
-                alert("تم حفظ التعديلات محلياً بنجاح!");
+            fetch(storeConfig.googleSheetUrl, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                alert("تم حفظ وتحديث كافة التغييرات وإرسالها للسحابة بنجاح!");
                 closeAdminDashboard();
+            }).catch(err => {
+                alert("تم الحفظ محلياً، ولكن حدث خطأ أثناء المزامنة مع السحابة.");
+                console.log(err);
+            });
+        }
+
+        function checkoutWhatsApp() {
+            if(cart.length === 0) { alert("السلة فارغة!"); return; }
+
+            const name = document.getElementById('clientName').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+            const address = document.getElementById('clientAddress').value.trim();
+            const notes = document.getElementById('clientNotes').value.trim();
+            const zoneSelect = document.getElementById('deliveryZoneSelect');
+
+            if(!name || !phone || !address) {
+                alert("من فضلك أدخل بيانات التوصيل (الاسم، رقم الموبايل، العنوان).");
+                return;
             }
+
+            let zoneName = "غير محدد";
+            let shippingFee = 0;
+            if(zoneSelect && deliveryZones.length > 0 && zoneSelect.value !== "") {
+                const z = deliveryZones[parseInt(zoneSelect.value)];
+                if(z) {
+                    zoneName = z.name;
+                    shippingFee = z.fee;
+                }
+            }
+
+            let msg = `🛒 *طلب جديد من المتجر*:\n\n`;
+            msg += `👤 *الاسم*: ${name}\n`;
+            msg += `📞 *الهاتف*: ${phone}\n`;
+            msg += `📍 *العنوان*: ${address}\n`;
+            if(notes) msg += `📝 *ملاحظات*: ${notes}\n`;
+            msg += `🚚 *منطقة الشحن*: ${zoneName} (${shippingFee} ج.م)\n\n`;
+            msg += `📦 *المنتجات المطلوبة*:\n`;
+
+            let subtotal = 0;
+            cart.forEach((item, idx) => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                msg += `${idx + 1}. ${item.name} (${item.quantity} ${item.unit || 'قطعة'}) - ${itemTotal} ج.م\n`;
+            });
+
+            const grandTotal = subtotal + shippingFee;
+            msg += `\n💰 *إجمالي المنتجات*: ${subtotal} ج.م`;
+            msg += `\n🏷️ *الإجمالي الكلي (شامل الشحن)*: *${grandTotal} ج.م*`;
+
+            const encoded = encodeURIComponent(msg);
+            const waUrl = `https://wa.me/${storeConfig.whatsapp}?text=${encoded}`;
+            window.open(waUrl, '_blank');
         }
     </script>
 </body>
