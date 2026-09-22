@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div id="loadingIndicator" class="text-center py-12 text-slate-500 font-semibold">جاري تحميل المنتجات والبيانات...</div>
+        <div id="loadingIndicator" class="text-center py-12 text-slate-500 font-semibold">جاري مزامنة وتحميل المنتجات من السحابة...</div>
         <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
     </main>
 
@@ -270,14 +270,13 @@
                     <button onclick="saveAndSyncEverything()" class="w-full bg-green-600 hover:bg-green-700 text-white font-extrabold py-4 rounded-2xl shadow-xl text-base flex items-center justify-center gap-2 transition transform active:scale-95">
                         <i class="fa-solid fa-cloud-arrow-up text-xl"></i> حفظ وتحديث كل التغييرات في النظام والشيت
                     </button>
-                    <p class="text-[11px] text-center text-slate-400 mt-2">اضغط هنا بعد الانتهاء من كافة التعديلات والإضافات ليتم اعتمادها فوراً.</p>
+                    <p class="text-[11px] text-center text-slate-400 mt-2">اضغط هنا بعد الانتهاء من كافة التعديلات والإضافات ليتم حفظها سحابياً وتظهر للجميع.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // دالة لجلب البيانات المخزنة مسبقاً أو استخدام الافتراضية
         let storeConfig = JSON.parse(localStorage.getItem('general_store_config')) || {
             name: "متجر المبيعات العام",
             description: "أفضل المنتجات وأحدث العروض والأسعار تجدها هنا دائماً.",
@@ -311,21 +310,25 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             applyStoreConfig();
+            
+            // سحب البيانات من السحابة (Google Sheet) فور فتح الموقع للجميع
+            if (storeConfig.googleSheetUrl) {
+                fetchStoreDataFromCloud();
+            } else {
+                const loader = document.getElementById('loadingIndicator');
+                if(loader) loader.style.display = 'none';
+                renderEverything();
+            }
+        });
+
+        function renderEverything() {
             renderSocialIcons();
             renderBanners();
             renderCategoryFilters();
             renderProducts();
             populateDeliveryZones();
             populateProductCategories();
-
-            // محاولة جلب أحدث البيانات من الشيت وسحبها للمتصفح تلقائياً عند فتح الموقع
-            if (storeConfig.googleSheetUrl) {
-                fetchStoreDataFromCloud();
-            } else {
-                const loader = document.getElementById('loadingIndicator');
-                if(loader) loader.style.display = 'none';
-            }
-        });
+        }
 
         function populateProductCategories(selectedCategory = '') {
             const select = document.getElementById('newProdCategory');
@@ -386,7 +389,7 @@
                         if (data.socialLinks) socialLinks = data.socialLinks;
                         if (data.bannerImages) bannerImages = data.bannerImages;
                         
-                        // تحديث التخزين المحلي تلقائياً لتثبيت البيانات الجديدة للمتصفح الحالي
+                        // تحديث التخزين المحلي
                         localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
                         localStorage.setItem('general_store_products', JSON.stringify(products));
                         localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -394,15 +397,13 @@
                         localStorage.setItem('general_store_banners', JSON.stringify(bannerImages));
 
                         applyStoreConfig();
-                        renderSocialIcons();
-                        renderBanners();
-                        renderCategoryFilters();
-                        renderProducts();
-                        populateDeliveryZones();
-                        populateProductCategories();
+                        renderEverything();
                     }
                 })
-                .catch(err => console.log("تعذر جلب البيانات السحابية، سيتم الاعتماد على البيانات المحلية", err))
+                .catch(err => {
+                    console.log("تعذر جلب التحديثات السحابية، جارِ الاعتماد على التخزين المحلي", err);
+                    renderEverything();
+                })
                 .finally(() => {
                     const loader = document.getElementById('loadingIndicator');
                     if(loader) loader.style.display = 'none';
@@ -949,7 +950,7 @@
             storeConfig.primaryColor = document.getElementById('settingColor').value;
             if(tempLogoBase64) storeConfig.logoUrl = tempLogoBase64;
 
-            // الحفظ المحلي لكي تبقى البيانات ثابتة على الجهاز
+            // الحفظ المحلي
             localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('general_store_products', JSON.stringify(products));
             localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -957,11 +958,7 @@
             localStorage.setItem('general_store_banners', JSON.stringify(bannerImages));
 
             applyStoreConfig();
-            renderSocialIcons();
-            renderBanners();
-            renderCategoryFilters();
-            renderProducts();
-            populateDeliveryZones();
+            renderEverything();
 
             const payload = {
                 config: storeConfig,
@@ -978,9 +975,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 }).then(() => {
-                    alert("تم حفظ التحديثات وتناغمها مع السحابة والشيت بنجاح!");
+                    alert("تم حفظ وتحديث البيانات في السحابة وجوجل شيت بنجاح! ستظهر للجميع الآن.");
                 }).catch(err => {
-                    alert("تم الحفظ محلياً بنجاح.");
+                    alert("تم الحفظ محلياً.");
                 });
             } else {
                 alert("تم الحفظ بنجاح!");
