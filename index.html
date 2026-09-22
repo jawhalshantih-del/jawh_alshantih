@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div id="loadingIndicator" class="text-center py-12 text-slate-500 font-semibold">جاري تحميل المنتجات والبيانات من السحابة...</div>
+        <div id="loadingIndicator" class="text-center py-12 text-slate-500 font-semibold">جاري تحميل المنتجات والبيانات...</div>
         <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
     </main>
 
@@ -277,6 +277,7 @@
     </div>
 
     <script>
+        // دالة لجلب البيانات المخزنة مسبقاً أو استخدام الافتراضية
         let storeConfig = JSON.parse(localStorage.getItem('general_store_config')) || {
             name: "متجر المبيعات العام",
             description: "أفضل المنتجات وأحدث العروض والأسعار تجدها هنا دائماً.",
@@ -317,8 +318,12 @@
             populateDeliveryZones();
             populateProductCategories();
 
+            // محاولة جلب أحدث البيانات من الشيت وسحبها للمتصفح تلقائياً عند فتح الموقع
             if (storeConfig.googleSheetUrl) {
                 fetchStoreDataFromCloud();
+            } else {
+                const loader = document.getElementById('loadingIndicator');
+                if(loader) loader.style.display = 'none';
             }
         });
 
@@ -371,7 +376,9 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.success) {
-                        if (data.config && data.config.name) storeConfig = { ...storeConfig, ...data.config };
+                        if (data.config && data.config.name) {
+                            storeConfig = { ...storeConfig, ...data.config };
+                        }
                         storeConfig.googleSheetUrl = "https://script.google.com/macros/s/AKfycbyBl7z-JBnOgfrZzzMin17ndNWeqjmOux1723uCpgbXa5WOpXipyr4oZhCZDeoQK9f5/exec";
                         
                         if (data.products && data.products.length > 0) products = data.products;
@@ -379,6 +386,7 @@
                         if (data.socialLinks) socialLinks = data.socialLinks;
                         if (data.bannerImages) bannerImages = data.bannerImages;
                         
+                        // تحديث التخزين المحلي تلقائياً لتثبيت البيانات الجديدة للمتصفح الحالي
                         localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
                         localStorage.setItem('general_store_products', JSON.stringify(products));
                         localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -394,7 +402,7 @@
                         populateProductCategories();
                     }
                 })
-                .catch(err => console.log("تعذر جلب التحديثات السحابية", err))
+                .catch(err => console.log("تعذر جلب البيانات السحابية، سيتم الاعتماد على البيانات المحلية", err))
                 .finally(() => {
                     const loader = document.getElementById('loadingIndicator');
                     if(loader) loader.style.display = 'none';
@@ -623,7 +631,7 @@
             }
 
             filtered.forEach(p => {
-                grid.innerHTML = grid.innerHTML + `
+                grid.innerHTML += `
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition">
                         <div class="h-36 sm:h-44 bg-slate-100 relative overflow-hidden">
                             <img src="${p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300'}" class="w-full h-full object-cover">
@@ -941,6 +949,7 @@
             storeConfig.primaryColor = document.getElementById('settingColor').value;
             if(tempLogoBase64) storeConfig.logoUrl = tempLogoBase64;
 
+            // الحفظ المحلي لكي تبقى البيانات ثابتة على الجهاز
             localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('general_store_products', JSON.stringify(products));
             localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -969,9 +978,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 }).then(() => {
-                    alert("تم حفظ التحديثات وتناغمها مع السحابة بنجاح!");
+                    alert("تم حفظ التحديثات وتناغمها مع السحابة والشيت بنجاح!");
                 }).catch(err => {
-                    alert("تم الحفظ محلياً، ولكن تعذر المزامنة السحابية.");
+                    alert("تم الحفظ محلياً بنجاح.");
                 });
             } else {
                 alert("تم الحفظ بنجاح!");
