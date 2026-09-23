@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">جوه الشنطه</title>
+    <title id="pageTitle">متجر المبيعات العام</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,7 +34,7 @@
                     <i id="navLogoIcon" class="fa-solid fa-store text-xl"></i>
                 </div>
                 <div>
-                    <h1 id="navStoreName" class="font-bold text-lg leading-tight">متجرنا</h1>
+                    <h1 id="navStoreName" class="font-bold text-lg leading-tight">متجر المبيعات العام</h1>
                     <div id="navSocialIcons" class="flex items-center gap-2 mt-0.5"></div>
                 </div>
             </div>
@@ -77,7 +77,7 @@
     <!-- وصف الموقع السفلي -->
     <footer class="bg-white border-t border-slate-200 py-6 px-4 mt-auto">
         <div class="container mx-auto text-center space-y-2">
-            <h3 id="footerStoreName" class="font-bold text-base text-slate-800">متجرنا</h3>
+            <h3 id="footerStoreName" class="font-bold text-base text-slate-800">متجر المبيعات العام</h3>
             <p id="footerStoreDesc" class="text-xs text-slate-500 max-w-xl mx-auto leading-relaxed">أفضل المنتجات وأحدث العروض والأسعار تجدها هنا دائماً.</p>
             <p class="text-[10px] text-slate-400 pt-2">جميع الحقوق محفوظة © 2026</p>
         </div>
@@ -160,7 +160,7 @@
             </div>
             
             <div class="flex-grow overflow-y-auto p-6 space-y-6">
-                <!-- إعدادات عامة وشعار ووصف الموقع -->
+                <!-- إعدادات عامة -->
                 <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 class="font-bold text-sm text-primary">البيانات الأساسية وشعار ومتجر الموقع</h4>
                     <div>
@@ -168,7 +168,7 @@
                         <input type="text" id="settingStoreName" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-sm mt-1">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-600">وصف الموقع (يظهر أسفل الموقع):</label>
+                        <label class="text-xs font-semibold text-slate-600">وصف الموقع:</label>
                         <textarea id="settingStoreDesc" rows="2" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-sm mt-1" placeholder="اكتب وصفاً مختصراً لمتجرك..."></textarea>
                     </div>
                     <div>
@@ -189,36 +189,36 @@
                     </div>
                 </div>
 
-                <!-- إدارة روابط التواصل الاجتماعي -->
+                <!-- روابط التواصل -->
                 <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 class="font-bold text-sm text-primary">إدارة روابط التواصل الاجتماعي</h4>
                     <div class="grid grid-cols-2 gap-2">
                         <select id="newSocialPlatform" class="bg-white border border-slate-200 rounded-lg p-2 text-sm">
-                            <option value="facebook">فيسبوك (Facebook)</option>
-                            <option value="instagram">إنستجرام (Instagram)</option>
-                            <option value="tiktok">تيك توك (TikTok)</option>
-                            <option value="youtube">يوتيوب (YouTube)</option>
-                            <option value="telegram">تليجرام (Telegram)</option>
-                            <option value="globe">موقع إلكتروني آخر</option>
+                            <option value="facebook">فيسبوك</option>
+                            <option value="instagram">إنستجرام</option>
+                            <option value="tiktok">تيك توك</option>
+                            <option value="youtube">يوتيوب</option>
+                            <option value="telegram">تليجرام</option>
+                            <option value="globe">موقع إلكتروني</option>
                         </select>
-                        <input type="text" id="newSocialUrl" placeholder="رابط الحساب (https://...)" class="bg-white border border-slate-200 rounded-lg p-2 text-sm">
+                        <input type="text" id="newSocialUrl" placeholder="رابط الحساب" class="bg-white border border-slate-200 rounded-lg p-2 text-sm">
                     </div>
                     <button onclick="addSocialLink()" class="w-full bg-secondary text-white text-sm font-bold py-2 rounded-lg shadow transition">إضافة رابط التواصل</button>
                     <div id="adminSocialList" class="space-y-2 max-h-32 overflow-y-auto mt-2"></div>
                 </div>
 
-                <!-- إدارة واجهة الإعلانات الاحترافية -->
+                <!-- البانرات -->
                 <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <h4 class="font-bold text-sm text-primary">إدارة واجهة الإعلانات (Banner Slideshow)</h4>
+                    <h4 class="font-bold text-sm text-primary">إدارة واجهة الإعلانات (Banners)</h4>
                     <div class="space-y-2">
-                        <input type="file" id="newBannerFile" accept="image/*" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-primary file:text-white">
-                        <input type="text" id="newBannerLink" placeholder="رابط عند الضغط على الإعلان (اختياري)" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm">
+                        <input type="file" id="newBannerFile" accept="image/*" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm">
+                        <input type="text" id="newBannerLink" placeholder="رابط عند الضغط على الإعلان" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm">
                     </div>
                     <button onclick="addBannerImage()" class="w-full bg-secondary text-white text-sm font-bold py-2 rounded-lg shadow transition">إضافة صورة للإعلانات</button>
                     <div id="adminBannersList" class="space-y-2 max-h-36 overflow-y-auto mt-2"></div>
                 </div>
 
-                <!-- إدارة مناطق الشحن -->
+                <!-- مناطق الشحن -->
                 <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 class="font-bold text-sm text-primary">إدارة مناطق وأسعار الشحن</h4>
                     <input type="hidden" id="editingZoneIndex" value="-1">
@@ -230,7 +230,7 @@
                     <div id="adminZonesList" class="space-y-2 max-h-36 overflow-y-auto mt-2"></div>
                 </div>
 
-                <!-- إدارة وتعديل المنتجات -->
+                <!-- المنتجات -->
                 <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 class="font-bold text-sm text-primary">إدارة وتعديل المنتجات والمجموعات</h4>
                     <input type="hidden" id="editingProductIndex" value="-1">
@@ -247,14 +247,13 @@
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
-
                         <select id="newProdUnit" class="bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold text-primary">
                             <option value="قطعة">قطعة</option>
                             <option value="كيلو">كيلو</option>
                             <option value="عبوة">عبوة</option>
                             <option value="دستة">دستة</option>
                         </select>
-                        <input type="file" id="newProdImageFile" accept="image/*" class="bg-white border border-slate-200 rounded-lg p-1 text-xs file:mr-1 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-primary file:text-white">
+                        <input type="file" id="newProdImageFile" accept="image/*" class="bg-white border border-slate-200 rounded-lg p-1 text-xs">
                     </div>
                     <button onclick="saveProductItem()" id="productActionBtn" class="w-full bg-secondary text-white text-sm font-bold py-2 rounded-lg shadow transition">إضافة المنتج للقائمة</button>
                     <div id="adminProductsList" class="space-y-2 max-h-45 overflow-y-auto mt-2"></div>
@@ -263,18 +262,43 @@
                 <!-- زر الحفظ والتحديث الشامل -->
                 <div class="pt-4 pb-6">
                     <button onclick="saveAndSyncEverything()" class="w-full bg-green-600 hover:bg-green-700 text-white font-extrabold py-4 rounded-2xl shadow-xl text-base flex items-center justify-center gap-2 transition transform active:scale-95">
-                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i> حفظ وتحديث الشيتات المنفصلة مباشرة
+                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i> حفظ وتحديث النظام بالكامل
                     </button>
-                    <p class="text-[11px] text-center text-slate-400 mt-2">سيتم توزيع البيانات في الشيتات وتحديثها للجميع لحظياً.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // 🚀 المنتجات الافتراضية المضمنة في الكود مباشرة (لتظهر فوراً في المتصفح العادي والخفي بدون أي انتظار)
+        const DEFAULT_PRODUCTS = [
+            {
+                id: 1,
+                name: "شنطة يد جلد فاخرة",
+                price: 450,
+                category: "شنائب وشنط",
+                unit: "قطعة",
+                image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300"
+            },
+            {
+                id: 2,
+                name: "محفظة رجالي أنيقة",
+                price: 150,
+                category: "محافظ",
+                unit: "قطعة",
+                image: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=300"
+            }
+        ];
+
+        const DEFAULT_ZONES = [
+            { name: "القاهرة والجيزة", fee: 50 },
+            { name: "الإسكندرية", fee: 60 },
+            { name: "المحافظات الأخرى", fee: 70 }
+        ];
+
         let storeConfig = JSON.parse(localStorage.getItem('general_store_config')) || {
-            name: "متجرنا",
-            description: "أحدث المنتجات والعروض",
+            name: "متجر المبيعات العام",
+            description: "أفضل المنتجات وأحدث العروض والأسعار تجدها هنا دائماً.",
             whatsapp: "201000000000",
             primaryColor: "#2563eb",
             logoUrl: "",
@@ -287,11 +311,13 @@
 
         let socialLinks = JSON.parse(localStorage.getItem('general_store_social')) || [];
         let bannerImages = JSON.parse(localStorage.getItem('general_store_banners')) || [];
-        let deliveryZones = JSON.parse(localStorage.getItem('general_store_zones')) || [];
         
-        // تنظيف أي منتجات تجريبية قديمة عالقة في الذاكرة المحلية نهائياً
-        let rawStoredProducts = JSON.parse(localStorage.getItem('general_store_products')) || [];
-        let products = rawStoredProducts.filter(p => !p.name.includes("تجريبي") && !p.name.includes("تجربة"));
+        // التحميل الفوري من الذاكرة المحلية أو استخدام المنتجات المضمنة بالأساس لضمان عدم ظهور الشاشة فارغة أبداً
+        let storedProds = JSON.parse(localStorage.getItem('general_store_products'));
+        let products = (storedProds && storedProds.length > 0) ? storedProds : DEFAULT_PRODUCTS;
+
+        let storedZones = JSON.parse(localStorage.getItem('general_store_zones'));
+        let deliveryZones = (storedZones && storedZones.length > 0) ? storedZones : DEFAULT_ZONES;
 
         let cart = [];
         let currentCategory = 'all';
@@ -300,9 +326,9 @@
         let slideInterval = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // عرض فوري ونظيف من البيانات الحقيقية فقط
+            // عرض فورررري بدون أي انتظار
             renderEverything();
-            // مزامنة صامتة وخفيفة في الخلفية لجلب آخر التحديثات من جوجل شيت
+            // مزامنة خفيفة في الخلفية لضمان جلب أي تحديث جديد من جوجل شيت بصمت
             fetchStoreDataFromCloudSilent();
         });
 
@@ -319,15 +345,12 @@
         function populateProductCategories(selectedCategory = '') {
             const select = document.getElementById('newProdCategory');
             if (!select) return;
-
             const categories = [...new Set(products.map(p => p.category || 'عام'))];
-            
             let optionsHtml = `<option value="">-- اختر المجموعة --</option>`;
             categories.forEach(cat => {
                 const isSelected = (cat === selectedCategory) ? 'selected' : '';
                 optionsHtml += `<option value="${cat}" ${isSelected}>${cat}</option>`;
             });
-            
             select.innerHTML = optionsHtml;
         }
 
@@ -336,15 +359,10 @@
             if (newCatName && newCatName.trim() !== "") {
                 newCatName = newCatName.trim();
                 const select = document.getElementById('newProdCategory');
-                
                 let exists = false;
                 for (let i = 0; i < select.options.length; i++) {
-                    if (select.options[i].value === newCatName) {
-                        exists = true;
-                        break;
-                    }
+                    if (select.options[i].value === newCatName) { exists = true; break; }
                 }
-                
                 if (!exists) {
                     const opt = document.createElement('option');
                     opt.value = newCatName;
@@ -354,7 +372,6 @@
                 } else {
                     select.value = newCatName;
                 }
-                
                 renderCategoryFilters();
             }
         }
@@ -370,11 +387,12 @@
                         }
                         storeConfig.googleSheetUrl = "https://script.google.com/macros/s/AKfycbyBl7z-JBnOgfrZzzMin17ndNWeqjmOux1723uCpgbXa5WOpXipyr4oZhCZDeoQK9f5/exec";
                         
-                        if (data.products) products = data.products.filter(p => !p.name.includes("تجريبي"));
-                        if (data.zones) deliveryZones = data.zones;
-                        if (data.socialLinks) socialLinks = data.socialLinks;
-                        if (data.bannerImages) bannerImages = data.bannerImages;
+                        if (data.products && data.products.length > 0) products = data.products;
+                        if (data.zones && data.zones.length > 0) deliveryZones = data.zones;
+                        if (data.socialLinks && data.socialLinks.length > 0) socialLinks = data.socialLinks;
+                        if (data.bannerImages && data.bannerImages.length > 0) bannerImages = data.bannerImages;
 
+                        // حفظ التحديثات تلقائياً في التخزين المحلي لكل من يفتح الموقع
                         localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
                         localStorage.setItem('general_store_products', JSON.stringify(products));
                         localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -386,7 +404,7 @@
                     }
                 })
                 .catch(err => {
-                    console.log("العمل بالبيانات المخزنة محلياً", err);
+                    console.log("العمل بالنسخة المحفوظة محلياً أو الافتراضية", err);
                 });
         }
 
@@ -416,7 +434,6 @@
             if(!container) return;
             container.innerHTML = '';
             if(!socialLinks || socialLinks.length === 0) return;
-
             socialLinks.forEach(s => {
                 let iconClass = "fa-solid fa-globe";
                 if(s.platform === 'facebook') iconClass = "fa-brands fa-facebook";
@@ -424,7 +441,6 @@
                 else if(s.platform === 'tiktok') iconClass = "fa-brands fa-tiktok";
                 else if(s.platform === 'youtube') iconClass = "fa-brands fa-youtube";
                 else if(s.platform === 'telegram') iconClass = "fa-brands fa-telegram";
-
                 container.innerHTML += `
                     <a href="${s.url}" target="_blank" class="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-xs text-white transition" title="${s.platform}">
                         <i class="${iconClass}"></i>
@@ -503,9 +519,7 @@
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempLogoBase64 = e.target.result;
-                };
+                reader.onload = function(e) { tempLogoBase64 = e.target.result; };
                 reader.readAsDataURL(file);
             }
         }
@@ -520,13 +534,11 @@
             const container = document.getElementById('cartItemsContainer');
             if(!container) return;
             container.innerHTML = '';
-
             if(cart.length === 0) {
                 container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">السلة فارغة حالياً</p>`;
                 updateCartTotal();
                 return;
             }
-
             cart.forEach((item, index) => {
                 container.innerHTML += `
                     <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
@@ -551,9 +563,7 @@
 
         function changeQty(index, delta) {
             cart[index].qty += delta;
-            if(cart[index].qty <= 0) {
-                cart.splice(index, 1);
-            }
+            if(cart[index].qty <= 0) { cart.splice(index, 1); }
             renderCartItems();
             updateCartBadge();
         }
@@ -585,7 +595,6 @@
             const zoneSelect = document.getElementById('deliveryZoneSelect');
             let shippingFee = zoneSelect && zoneSelect.value ? parseFloat(zoneSelect.value) : 0;
             let grandTotal = subtotal + shippingFee;
-            
             const priceSpan = document.getElementById('cartTotalPrice');
             if(priceSpan) priceSpan.innerText = grandTotal + " ج.م";
         }
@@ -607,7 +616,7 @@
             }
 
             if(filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">لا توجد منتجات مضافة حتى الآن. قم بإضافة منتجاتك من لوحة التحكم (أيقونة الترس).</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">لا توجد منتجات مسجلة.</div>`;
                 return;
             }
 
@@ -635,20 +644,13 @@
         function addToCart(id) {
             const product = products.find(p => p.id === id);
             if(!product) return;
-
             const existing = cart.find(item => item.id === id);
-            if(existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({ ...product, qty: 1 });
-            }
+            if(existing) { existing.qty += 1; } else { cart.push({ ...product, qty: 1 }); }
             updateCartBadge();
             toggleCartModal();
         }
 
-        function filterProducts() {
-            renderProducts();
-        }
+        function filterProducts() { renderProducts(); }
 
         function setCategory(cat) {
             currentCategory = cat;
@@ -662,35 +664,23 @@
         function renderCategoryFilters() {
             const container = document.getElementById('categoryFilters');
             if(!container) return;
-
             const categories = [...new Set(products.map(p => p.category || 'عام'))];
             container.innerHTML = `<button onclick="setCategory('all')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold ${currentCategory === 'all' ? 'bg-primary text-white' : 'bg-white border border-slate-200 text-slate-600'} transition shadow-sm">الكل</button>`;
-
             categories.forEach(cat => {
                 const isActive = currentCategory === cat;
-                container.innerHTML += `
-                    <button onclick="setCategory('${cat}')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold ${isActive ? 'bg-primary text-white' : 'bg-white border border-slate-200 text-slate-600'} transition shadow-sm">${cat}</button>
-                `;
+                container.innerHTML += `<button onclick="setCategory('${cat}')" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold ${isActive ? 'bg-primary text-white' : 'bg-white border border-slate-200 text-slate-600'} transition shadow-sm">${cat}</button>`;
             });
         }
 
-        function openAdminModal() {
-            document.getElementById('adminLoginModal').classList.remove('hidden');
-        }
-
-        function closeAdminLogin() {
-            document.getElementById('adminLoginModal').classList.add('hidden');
-            document.getElementById('adminPasswordInput').value = '';
-        }
+        function openAdminModal() { document.getElementById('adminLoginModal').classList.remove('hidden'); }
+        function closeAdminLogin() { document.getElementById('adminLoginModal').classList.add('hidden'); document.getElementById('adminPasswordInput').value = ''; }
 
         function verifyAdminPassword() {
             const pass = document.getElementById('adminPasswordInput').value;
             if(pass === FIXED_ADMIN_PASSWORD) {
                 closeAdminLogin();
                 openAdminDashboard();
-            } else {
-                alert("كلمة المرور غير صحيحة!");
-            }
+            } else { alert("كلمة المرور غير صحيحة!"); }
         }
 
         function openAdminDashboard() {
@@ -703,9 +693,7 @@
             populateProductCategories();
         }
 
-        function closeAdminDashboard() {
-            document.getElementById('adminDashboardModal').classList.add('hidden');
-        }
+        function closeAdminDashboard() { document.getElementById('adminDashboardModal').classList.add('hidden'); }
 
         function loadAdminDataToInputs() {
             document.getElementById('settingStoreName').value = storeConfig.name;
@@ -718,10 +706,7 @@
         function addSocialLink() {
             const platform = document.getElementById('newSocialPlatform').value;
             const url = document.getElementById('newSocialUrl').value.trim();
-            if(!url) {
-                alert("يرجى إدخال رابط الحساب");
-                return;
-            }
+            if(!url) { alert("يرجى إدخال رابط الحساب"); return; }
             socialLinks.push({ platform, url });
             document.getElementById('newSocialUrl').value = '';
             renderAdminSocialList();
@@ -740,29 +725,21 @@
                 `;
             });
         }
-
-        function removeSocialLink(idx) {
-            socialLinks.splice(idx, 1);
-            renderAdminSocialList();
-        }
+        function removeSocialLink(idx) { socialLinks.splice(idx, 1); renderAdminSocialList(); }
 
         function addBannerImage() {
             const fileInput = document.getElementById('newBannerFile');
             const linkInput = document.getElementById('newBannerLink');
             const link = linkInput.value.trim();
-
             if(fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     bannerImages.push({ image: e.target.result, link });
-                    fileInput.value = '';
-                    linkInput.value = '';
+                    fileInput.value = ''; linkInput.value = '';
                     renderAdminBannersList();
                 };
                 reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                alert("يرجى اختيار صورة للإعلان");
-            }
+            } else { alert("يرجى اختيار صورة للإعلان"); }
         }
 
         function renderAdminBannersList() {
@@ -779,34 +756,21 @@
                 `;
             });
         }
-
-        function removeBannerImage(idx) {
-            bannerImages.splice(idx, 1);
-            renderAdminBannersList();
-        }
+        function removeBannerImage(idx) { bannerImages.splice(idx, 1); renderAdminBannersList(); }
 
         function saveZoneItem() {
             const name = document.getElementById('newZoneName').value.trim();
             const fee = parseFloat(document.getElementById('newZoneFee').value);
             const editIdx = parseInt(document.getElementById('editingZoneIndex').value);
-
-            if(!name || isNaN(fee)) {
-                alert("يرجى إدخال اسم المنطقة وتكلفة الشحن بشكل صحيح");
-                return;
-            }
-
+            if(!name || isNaN(fee)) { alert("يرجى إدخال اسم المنطقة وتكلفة الشحن"); return; }
             if(editIdx >= 0) {
                 deliveryZones[editIdx] = { name, fee };
                 document.getElementById('editingZoneIndex').value = -1;
                 document.getElementById('zoneActionBtn').innerText = "إضافة منطقة الشحن";
-            } else {
-                deliveryZones.push({ name, fee });
-            }
-
+            } else { deliveryZones.push({ name, fee }); }
             document.getElementById('newZoneName').value = '';
             document.getElementById('newZoneFee').value = '';
-            renderAdminZonesList();
-            populateDeliveryZones();
+            renderAdminZonesList(); populateDeliveryZones();
         }
 
         function renderAdminZonesList() {
@@ -825,19 +789,13 @@
                 `;
             });
         }
-
         function editZone(idx) {
             document.getElementById('newZoneName').value = deliveryZones[idx].name;
             document.getElementById('newZoneFee').value = deliveryZones[idx].fee;
             document.getElementById('editingZoneIndex').value = idx;
             document.getElementById('zoneActionBtn').innerText = "تعديل منطقة الشحن";
         }
-
-        function removeZone(idx) {
-            deliveryZones.splice(idx, 1);
-            renderAdminZonesList();
-            populateDeliveryZones();
-        }
+        function removeZone(idx) { deliveryZones.splice(idx, 1); renderAdminZonesList(); populateDeliveryZones(); }
 
         function saveProductItem() {
             const name = document.getElementById('newProdName').value.trim();
@@ -847,16 +805,11 @@
             const editIdx = parseInt(document.getElementById('editingProductIndex').value);
             const fileInput = document.getElementById('newProdImageFile');
 
-            if(!name || isNaN(price)) {
-                alert("يرجى إدخال اسم المنتج والسعر على الأقل");
-                return;
-            }
-
+            if(!name || isNaN(price)) { alert("يرجى إدخال اسم المنتج والسعر على الأقل"); return; }
             let imageUrl = editIdx >= 0 ? products[editIdx].image : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300';
 
             const proceedSave = (imgResult) => {
                 if(imgResult) imageUrl = imgResult;
-
                 if(editIdx >= 0) {
                     products[editIdx] = { ...products[editIdx], name, price, category, unit, image: imageUrl };
                     document.getElementById('editingProductIndex').value = -1;
@@ -865,23 +818,17 @@
                     const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
                     products.push({ id: newId, name, price, category, unit, image: imageUrl });
                 }
-
                 document.getElementById('newProdName').value = '';
                 document.getElementById('newProdPrice').value = '';
                 fileInput.value = '';
-                renderAdminProductsList();
-                renderCategoryFilters();
-                renderProducts();
-                populateProductCategories();
+                renderAdminProductsList(); renderCategoryFilters(); renderProducts(); populateProductCategories();
             };
 
             if(fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) { proceedSave(e.target.result); };
                 reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                proceedSave(null);
-            }
+            } else { proceedSave(null); }
         }
 
         function renderAdminProductsList() {
@@ -903,7 +850,6 @@
                 `;
             });
         }
-
         function editProduct(idx) {
             const p = products[idx];
             document.getElementById('newProdName').value = p.name;
@@ -913,16 +859,12 @@
             document.getElementById('productActionBtn').innerText = "تعديل المنتج";
             populateProductCategories(p.category);
         }
-
         function removeProduct(idx) {
             products.splice(idx, 1);
-            renderAdminProductsList();
-            renderCategoryFilters();
-            renderProducts();
-            populateProductCategories();
+            renderAdminProductsList(); renderCategoryFilters(); renderProducts(); populateProductCategories();
         }
 
-        // دالة الحفظ والتحديث الشامل في جوجل شيت وتحديث التخزين المحلي
+        // الحفظ والتحديث الشامل محلياً وفي جوجل شيت
         function saveAndSyncEverything() {
             storeConfig.name = document.getElementById('settingStoreName').value.trim() || storeConfig.name;
             storeConfig.description = document.getElementById('settingStoreDesc').value.trim();
@@ -931,7 +873,7 @@
             storeConfig.primaryColor = document.getElementById('settingColor').value;
             if(tempLogoBase64) storeConfig.logoUrl = tempLogoBase64;
 
-            // حفظ فوري في الكاش المحلي لضمان السرعة الصاروخية
+            // حفظ فوري في التخزين المحلي للمتصفح
             localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('general_store_products', JSON.stringify(products));
             localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -955,17 +897,16 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 }).then(() => {
-                    alert("✅ تم حفظ التحديثات وتوزيعها على الشيتات المستقلة في جوجل شيتس بنجاح!");
+                    alert("✅ تم حفظ التحديثات وتحديث النظام بالكامل بنجاح!");
                     closeAdminDashboard();
                 }).catch(err => {
-                    alert("⚠️ تعذر الاتصال بجوجل شيت.");
+                    alert("⚠️ تم الحفظ محلياً وتعذر الاتصال المؤقت بجوجل شيت.");
                 });
             } else {
-                alert("يرجى إدخال رابط جوجل شيت الصحيح.");
+                alert("تم الحفظ محلياً بنجاح.");
             }
         }
 
-        // إتمام الطلب وتمريره لجوجل شيت والواتساب معاً
         function checkoutWhatsApp() {
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
@@ -973,15 +914,8 @@
             const notes = document.getElementById('clientNotes').value.trim();
             const zoneSelect = document.getElementById('deliveryZoneSelect');
             
-            if (!name || !phone || !address) {
-                alert("يرجى إكمال بيانات التوصيل (الاسم، الموبايل، العنوان) قبل إتمام الطلب.");
-                return;
-            }
-
-            if (cart.length === 0) {
-                alert("السلة فارغة!");
-                return;
-            }
+            if (!name || !phone || !address) { alert("يرجى إكمال بيانات التوصيل."); return; }
+            if (cart.length === 0) { alert("السلة فارغة!"); return; }
 
             let selectedZoneName = "";
             let shippingFee = 0;
@@ -1005,19 +939,14 @@
 
             const orderPayload = {
                 type: "new_order",
-                name: name,
-                phone: phone,
-                address: address,
-                zone: selectedZoneName,
-                notes: notes,
-                items: rawItemsListText,
-                total: grandTotal
+                name: name, phone: phone, address: address,
+                zone: selectedZoneName, notes: notes,
+                items: rawItemsListText, total: grandTotal
             };
 
             if (storeConfig.googleSheetUrl) {
                 fetch(storeConfig.googleSheetUrl, {
-                    method: "POST",
-                    mode: "no-cors",
+                    method: "POST", mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(orderPayload)
                 }).catch(err => console.log("Cloud sync error", err));
@@ -1034,11 +963,7 @@
             message += `💰 *الإجمالي الكلي:* *${grandTotal} ج.م*\n`;
 
             let whatsappUrl = `https://wa.me/${storeConfig.whatsapp}?text=` + encodeURIComponent(message);
-            
-            cart = [];
-            updateCartBadge();
-            toggleCartModal();
-            
+            cart = []; updateCartBadge(); toggleCartModal();
             window.open(whatsappUrl, '_blank');
         }
     </script>
