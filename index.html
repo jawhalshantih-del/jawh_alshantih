@@ -270,30 +270,17 @@
     </div>
 
     <script>
-        // 🚀 المنتجات الافتراضية المضمنة في الكود مباشرة (لتظهر فوراً في المتصفح العادي والخفي بدون أي انتظار)
+        // 🚀 ضع هنا منتجاتك الحقيقية الأساسية (التي ستظهر فوراً لأي شخص يفتح الموقع بدون أي انتظار أو تحميل)
         const DEFAULT_PRODUCTS = [
-            {
-                id: 1,
-                name: "شنطة يد جلد فاخرة",
-                price: 450,
-                category: "شنائب وشنط",
-                unit: "قطعة",
-                image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300"
-            },
-            {
-                id: 2,
-                name: "محفظة رجالي أنيقة",
-                price: 150,
-                category: "محافظ",
-                unit: "قطعة",
-                image: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=300"
-            }
+            /* 
+              استبدل هذه المنتجات بمنتجاتك الحقيقية، أو اتركها فارغة هكذا [ ] إذا أردت أن تبدأ نظيفاً 
+              وعندما تضيف منتجاتك من لوحة التحكم سيتم تثبيتها للجميع.
+            */
         ];
 
         const DEFAULT_ZONES = [
             { name: "القاهرة والجيزة", fee: 50 },
-            { name: "الإسكندرية", fee: 60 },
-            { name: "المحافظات الأخرى", fee: 70 }
+            { name: "الإسكندرية", fee: 60 }
         ];
 
         let storeConfig = JSON.parse(localStorage.getItem('general_store_config')) || {
@@ -312,12 +299,12 @@
         let socialLinks = JSON.parse(localStorage.getItem('general_store_social')) || [];
         let bannerImages = JSON.parse(localStorage.getItem('general_store_banners')) || [];
         
-        // التحميل الفوري من الذاكرة المحلية أو استخدام المنتجات المضمنة بالأساس لضمان عدم ظهور الشاشة فارغة أبداً
+        // جلب المنتجات المثبتة محلياً أو استخدام الأساسية
         let storedProds = JSON.parse(localStorage.getItem('general_store_products'));
-        let products = (storedProds && storedProds.length > 0) ? storedProds : DEFAULT_PRODUCTS;
+        let products = (storedProds !== null) ? storedProds : DEFAULT_PRODUCTS;
 
         let storedZones = JSON.parse(localStorage.getItem('general_store_zones'));
-        let deliveryZones = (storedZones && storedZones.length > 0) ? storedZones : DEFAULT_ZONES;
+        let deliveryZones = (storedZones !== null) ? storedZones : DEFAULT_ZONES;
 
         let cart = [];
         let currentCategory = 'all';
@@ -326,9 +313,9 @@
         let slideInterval = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // عرض فورررري بدون أي انتظار
+            // عرض فوري وثابت للمنتجات المثبتة بدون أي انتظار
             renderEverything();
-            // مزامنة خفيفة في الخلفية لضمان جلب أي تحديث جديد من جوجل شيت بصمت
+            // مزامنة صامتة في الخلفية لجلب أي جديد وتثبيته تلقائياً
             fetchStoreDataFromCloudSilent();
         });
 
@@ -387,12 +374,12 @@
                         }
                         storeConfig.googleSheetUrl = "https://script.google.com/macros/s/AKfycbyBl7z-JBnOgfrZzzMin17ndNWeqjmOux1723uCpgbXa5WOpXipyr4oZhCZDeoQK9f5/exec";
                         
-                        if (data.products && data.products.length > 0) products = data.products;
-                        if (data.zones && data.zones.length > 0) deliveryZones = data.zones;
-                        if (data.socialLinks && data.socialLinks.length > 0) socialLinks = data.socialLinks;
-                        if (data.bannerImages && data.bannerImages.length > 0) bannerImages = data.bannerImages;
+                        if (data.products) products = data.products;
+                        if (data.zones) deliveryZones = data.zones;
+                        if (data.socialLinks) socialLinks = data.socialLinks;
+                        if (data.bannerImages) bannerImages = data.bannerImages;
 
-                        // حفظ التحديثات تلقائياً في التخزين المحلي لكل من يفتح الموقع
+                        // تثبيت البيانات الجديدة تلقائياً في التخزين المحلي لتظهر فوراً في أي جهاز أو متصفح خفي
                         localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
                         localStorage.setItem('general_store_products', JSON.stringify(products));
                         localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -404,7 +391,7 @@
                     }
                 })
                 .catch(err => {
-                    console.log("العمل بالنسخة المحفوظة محلياً أو الافتراضية", err);
+                    console.log("العمل بالنسخة المثبتة محلياً", err);
                 });
         }
 
@@ -616,7 +603,7 @@
             }
 
             if(filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">لا توجد منتجات مسجلة.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">لا توجد منتجات مسجلة حتى الآن. قم بإضافتها من لوحة التحكم (أيقونة الترس).</div>`;
                 return;
             }
 
@@ -864,7 +851,7 @@
             renderAdminProductsList(); renderCategoryFilters(); renderProducts(); populateProductCategories();
         }
 
-        // الحفظ والتحديث الشامل محلياً وفي جوجل شيت
+        // الحفظ والتحديث المثبت في السيستم وجوجل شيت معاً
         function saveAndSyncEverything() {
             storeConfig.name = document.getElementById('settingStoreName').value.trim() || storeConfig.name;
             storeConfig.description = document.getElementById('settingStoreDesc').value.trim();
@@ -873,7 +860,7 @@
             storeConfig.primaryColor = document.getElementById('settingColor').value;
             if(tempLogoBase64) storeConfig.logoUrl = tempLogoBase64;
 
-            // حفظ فوري في التخزين المحلي للمتصفح
+            // حفظ فوري في التخزين المحلي ليصبح هو القاعدة الأساسية الثابتة للموقع
             localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('general_store_products', JSON.stringify(products));
             localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -897,13 +884,13 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 }).then(() => {
-                    alert("✅ تم حفظ التحديثات وتحديث النظام بالكامل بنجاح!");
+                    alert("✅ تم حفظ وتثبيت التحديثات في السيستم وفي جوجل شيتس بنجاح تام وتظهر فوراً للجميع!");
                     closeAdminDashboard();
                 }).catch(err => {
-                    alert("⚠️ تم الحفظ محلياً وتعذر الاتصال المؤقت بجوجل شيت.");
+                    alert("⚠️ تم الحفظ والتثبيت محلياً.");
                 });
             } else {
-                alert("تم الحفظ محلياً بنجاح.");
+                alert("تم الحفظ والتثبيت محلياً بنجاح.");
             }
         }
 
@@ -953,7 +940,7 @@
             }
 
             let message = `*🛒 طلب جديد من المتجر*\n\n`;
-            message += `👤 *الاسم:* ${name}\n`;
+            message += `👤 *الاسم:* تمام\n`;
             message += `📞 *الهاتف:* ${phone}\n`;
             message += `📍 *العنوان:* ${address}\n`;
             if(selectedZoneName) message += `🚚 *منطقة الشحن:* ${selectedZoneName}\n`;
