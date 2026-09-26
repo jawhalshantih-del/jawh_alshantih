@@ -270,22 +270,7 @@
     </div>
 
     <script>
-        // 🚀 [المنتجات الافتراضية المدمجة]: املأ هذه القائمة بمنتجاتك الحقيقية مرة واحدة فقط.
-        // ستضمن هذه القائمة أن يفتح الموقع فوراً في أقل من جزء من الثانية لأي عميل جديد (حتى في المتصفح الخفي) بدون أي شاشة بيضاء أو انتظار!
-        const DEFAULT_PRODUCTS = [
-            /*
-              مثال:
-              {
-                  id: 1,
-                  name: "اسم منتجك",
-                  price: 200,
-                  category: "قسم كذا",
-                  unit: "قطعة",
-                  image: "رابط_الصورة"
-              }
-            */
-        ];
-
+        const DEFAULT_PRODUCTS = [];
         const DEFAULT_ZONES = [
             { name: "القاهرة والجيزة", fee: 50 },
             { name: "الإسكندرية", fee: 60 }
@@ -307,7 +292,6 @@
         let socialLinks = JSON.parse(localStorage.getItem('general_store_social')) || [];
         let bannerImages = JSON.parse(localStorage.getItem('general_store_banners')) || [];
         
-        // التحميل الفوري: إذا لم تكن البيانات مخزنة محلياً، يفتح القائمة الافتراضية فوراً بدون انتظار
         let storedProds = JSON.parse(localStorage.getItem('general_store_products'));
         let products = (storedProds !== null && storedProds.length > 0) ? storedProds : DEFAULT_PRODUCTS;
 
@@ -322,7 +306,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             renderEverything();
-            // مزامنة صامتة في الخلفية لجلب أي جديد من جوجل شيت وتحديثه تلقائياً
             fetchStoreDataFromCloudSilent();
         });
 
@@ -640,13 +623,40 @@
             });
         }
 
+        // 🚀 تعديل الإضافة للسلة: لا يفتح السلة بل يظهر رسالة تنبيه خضراء أعلى الشاشة ويستمر العميل في التسوق
         function addToCart(id) {
             const product = products.find(p => p.id === id);
             if(!product) return;
             const existing = cart.find(item => item.id === id);
-            if(existing) { existing.qty += 1; } else { cart.push({ ...product, qty: 1 }); }
+            if(existing) { 
+                existing.qty += 1; 
+            } else { 
+                cart.push({ ...product, qty: 1 }); 
+            }
             updateCartBadge();
-            toggleCartModal();
+            showToast(`تمت إضافة "${product.name}" إلى عربة التسوق بنجاح!`);
+        }
+
+        // دالة إظهار التنبيه الأخضر العائم
+        function showToast(message) {
+            let toast = document.getElementById('toastNotification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toastNotification';
+                toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 bg-green-600 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all duration-300 opacity-0 -translate-y-5 pointer-events-none';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-base"></i> <span>${message}</span>`;
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', '-translate-y-5');
+                toast.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-5');
+            }, 2500);
         }
 
         function filterProducts() { renderProducts(); }
@@ -863,7 +873,6 @@
             renderAdminProductsList(); renderCategoryFilters(); renderProducts(); populateProductCategories();
         }
 
-        // الحفظ والتحديث الشامل
         function saveAndSyncEverything() {
             storeConfig.name = document.getElementById('settingStoreName').value.trim() || storeConfig.name;
             storeConfig.description = document.getElementById('settingStoreDesc').value.trim();
@@ -872,7 +881,6 @@
             storeConfig.primaryColor = document.getElementById('settingColor').value;
             if(tempLogoBase64) storeConfig.logoUrl = tempLogoBase64;
 
-            // حفظ محلي فوري
             localStorage.setItem('general_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('general_store_products', JSON.stringify(products));
             localStorage.setItem('general_store_zones', JSON.stringify(deliveryZones));
@@ -930,7 +938,7 @@
             cart.forEach((item) => {
                 let itemTotal = item.price * item.qty;
                 subtotal += itemTotal;
-                itemsSummaryText += `▫️ ${item.name} (*${item.qty} ${item.unit}*) - ${itemTotal} ج.م\n`;
+                itemsSummaryText += `▫️ ${item.name} (${item.qty} ${item.unit}) - ${itemTotal} ج.م\n`;
                 rawItemsListText += `${item.name} (${item.qty} ${item.unit}), `;
             });
 
@@ -940,7 +948,7 @@
                 type: "new_order",
                 name: name, phone: phone, address: address,
                 zone: selectedZoneName, notes: notes,
-                items: rawItemsListTest, total: grandTotal
+                items: rawItemsListText, total: grandTotal
             };
 
             if (storeConfig.googleSheetUrl) {
